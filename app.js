@@ -1,6 +1,6 @@
 const Koa = require('koa')
 const bodyParser = require('koa-bodyparser')
-
+const cors = require('koa2-cors')
 const mongoose = require('./models/db')
 const loggerAsync = require('./middlewares/loggerAsync')
 
@@ -12,6 +12,19 @@ app.use(bodyParser())
 app.on('error', (err, ctx) => {
     console.log('发现异常：', err.message);
 })
+
+app.use(cors({
+    origin: function (ctx) {
+        // return "*";
+        return 'http://localhost:8080'
+    },
+    exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+    maxAge: 5,
+    credentials: true,
+    allowMethods: ['GET', 'POST', 'DELETE', 'PUT'],
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}))
+
 app.use(async (ctx, next) => {
     try {
         await next();

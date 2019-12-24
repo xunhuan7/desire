@@ -4,6 +4,7 @@ const UserModel = require('../../models/user')
 
 async function signIn(ctx, next) {
     const {email, password} = ctx.request.body
+    console.log(ctx.request.body)
 
     // 数据验证
     if (!(email && password)) {
