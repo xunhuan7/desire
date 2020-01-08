@@ -1,4 +1,5 @@
 const BlogModel = require('../../models/blog')
+const {getUserId, isRole, isLimited} = require('../../core/checkAuthority')
 
 async function getBlogList(ctx, next) {
     const pageInfo = {
@@ -18,6 +19,29 @@ async function getBlogList(ctx, next) {
     }
 
     const {page = 1, page_size = 20,} = pageInfo
+    if (await isRole(ctx, 'editor')) {
+        const creatorId = getUserId(ctx)
+        queryInfo.creator = creatorId
+        const count = await BlogModel.estimatedDocumentCount({creator: creatorId})
+        const list = await BlogModel.find(queryInfo).populate('creator')
+            .skip((page - 1) * page_size)
+            .limit(page_size).exec()
+        const has_prev = page !== 1
+        const has_next = page < Math.ceil(count / page_size)
+        ctx.body = {
+            code: 200,
+            message: '查询成功',
+            data: {
+                count,
+                page,
+                page_size,
+                has_prev,
+                has_next,
+                list,
+            }
+        }
+        return true
+    }
     const count = await BlogModel.estimatedDocumentCount({})
     const list = await BlogModel.find(queryInfo).populate('creator')
         .skip((page - 1) * page_size)

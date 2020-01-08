@@ -8,11 +8,18 @@ const getUserList = require('./controllers/user/getUserList')
 const updateUserById = require('./controllers/user/updateUserById')
 
 const createBlog = require('./controllers/blog/createBlog')
-const updateBlogStatus = require('./controllers/blog/updateBlogStatus')
 const getBlogById = require('./controllers/blog/getBlogById')
 const updateBlogById = require('./controllers/blog/updateBlogById')
+const updateBlogStatus = require('./controllers/blog/updateBlogStatus')
+const updateBlogStick = require('./controllers/blog/updateBlogStick')
 const getBlogList = require('./controllers/blog/getBlogList')
 const getBlogListByTags = require('./controllers/blog/getBlogListByTags')
+
+const getTags = require('./controllers/tag/getTags')
+
+const uploadFile = require('./controllers/file/uploadFile')
+
+const getHomeStatistics = require('./controllers/statistics/getHomeStatistics')
 
 router.get('/', (ctx, next) => {
     ctx.body = {
@@ -36,5 +43,15 @@ router
     .get('/blog/:_id', getBlogById)
     .put('/blog/:_id', updateBlogById)
     .put('/blog/:_id/status', updateBlogStatus)
+    .put('/blog/:_id/stick', updateBlogStick)
+
+router
+    .get('/tags', getTags)
+
+router
+    .post('/file/upload', uploadFile)
+
+router
+    .get('/statistics/home', getHomeStatistics)
 
 module.exports = router

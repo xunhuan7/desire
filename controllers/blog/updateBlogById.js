@@ -1,4 +1,5 @@
 const BlogModel = require('../../models/blog')
+const TagModel = require('../../models/tag')
 const {getUserId, isRole, isLimited} = require('../../core/checkAuthority')
 
 async function updateBlogById(ctx, next) {
@@ -45,16 +46,35 @@ async function updateBlogById(ctx, next) {
         tags: ctx.request.body.tags,
         weight: ctx.request.body.weight,
         stick: ctx.request.body.stick,
+        status: ctx.request.body.status,
     }
     for (const key in params) {
         const value = params[key]
-        if (!value || (Array.isArray(value) && value.length === 0)) {
+        if (key === 'stick') {
+            if (typeof value !== 'boolean') {
+                ctx.status = 400
+                ctx.body = {
+                    code: 400,
+                    message: '更新博客文章时head_photo,title,summary,content,tag,weight,stick均为必填字段',
+                }
+                return true
+            }
+        } else if (!value || (Array.isArray(value) && value.length === 0)) {
             ctx.status = 400
             ctx.body = {
                 code: 400,
-                message: '更新博客文章时head_photo,title,summary,content,tags,weight,stick均为必填字段',
+                message: '更新博客文章时head_photo,title,summary,content,tag,weight,stick均为必填字段',
             }
             return true
+        }
+    }
+
+    if (Array.isArray(params.tags)) {
+        for (let i = 0, length = params.tags.length; i < length; i++) {
+            const tag = params.tags[i]
+            if (!await TagModel.findOne({tag})) {
+                await TagModel.create({tag: params.tags[i]})
+            }
         }
     }
 

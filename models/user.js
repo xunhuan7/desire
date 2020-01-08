@@ -2,7 +2,6 @@ const mongoose = require('./db')
 const {Schema} = mongoose
 
 const UserSchema = new Schema({
-    _id: Schema.Types.ObjectId,
     email: {type: String, required: true},
     password: {type: String, required: true},
     nickname: {type: String, required: true},

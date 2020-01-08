@@ -34,7 +34,7 @@ async function signIn(ctx, next) {
         JSON_WEB_TOKEN.PRIVATE_KEY,
         {expiresIn: JSON_WEB_TOKEN.EXPIRES_IN}
     )
-    ctx.cookies.set('token', token)
+    ctx.cookies.set('token', token, {httpOnly: false, maxAge: JSON_WEB_TOKEN.COOKIE_EXPIRES_IN})
     ctx.body = {
         code: 200,
         message: '登录成功'

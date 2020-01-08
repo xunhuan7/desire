@@ -2,8 +2,11 @@ const mongoose = require('./db')
 const {Schema} = mongoose
 
 const BlogSchema = new Schema({
-    _id: Schema.Types.ObjectId,
-    head_photo: {type: String, required: false},
+    head_photo: {
+        type: String,
+        required: true,
+        default: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80'
+    },
     title: {type: String, required: true},
     summary: {type: String, required: true},
     creator: {type: Schema.Types.ObjectId, ref: 'user', required: true,},

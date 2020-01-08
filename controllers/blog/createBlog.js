@@ -1,4 +1,5 @@
 const BlogModel = require('../../models/blog')
+const TagModel = require('../../models/tag')
 const {getUserId, isRole, isLimited} = require('../../core/checkAuthority')
 
 async function createBlog(ctx, next) {
@@ -29,8 +30,13 @@ async function createBlog(ctx, next) {
         summary: ctx.request.body.summary,
     }
     if (Array.isArray(ctx.request.body.tags)) {
-        // TODO: redis更新tags以用于查询
         blogInstance.tags = ctx.request.body.tags
+        for (let i = 0, length = blogInstance.tags.length; i < length; i++) {
+            const tag = blogInstance.tags[i]
+            if (!await TagModel.findOne({tag})) {
+                await TagModel.create({tag: blogInstance.tags[i]})
+            }
+        }
     }
     const blogEntity = new BlogModel(blogInstance)
     await blogEntity.save()
